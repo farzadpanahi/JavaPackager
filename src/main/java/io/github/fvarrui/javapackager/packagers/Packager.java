@@ -1,6 +1,5 @@
 package io.github.fvarrui.javapackager.packagers;
 
-import static org.apache.commons.collections4.CollectionUtils.addIgnoreNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.io.File;
@@ -9,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
+import io.github.fvarrui.javapackager.common.generators.BundleJre;
 import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.utils.FileUtils;
 import io.github.fvarrui.javapackager.utils.IconUtils;
@@ -23,7 +24,6 @@ public abstract class Packager extends PackagerSettings {
 	private static final String DEFAULT_ORGANIZATION_NAME = "ACME";
 	
 	// artifact generators
-	protected List<ArtifactGenerator> installerGenerators = new ArrayList<>();
 	private BundleJre generateJre = new BundleJre(); 
 	
 	// internal generic properties (setted in "createAppStructure/createApp")
@@ -163,7 +163,6 @@ public abstract class Packager extends PackagerSettings {
 		// adds to additional resources
 		if (additionalResources != null) {
 			if (licenseFile != null) additionalResources.add(licenseFile);
-			additionalResources.add(iconFile);
 			Logger.info("Effective additional resources " + additionalResources);			
 		}		
 		
@@ -349,7 +348,7 @@ public abstract class Packager extends PackagerSettings {
         
 		// copies all dependencies to Java folder
 		Logger.infoIndent("Copying all dependencies ...");		
-		libsFolder = copyDependencies ? Context.getContext().copyDependencies(this) : null;
+		libsFolder = copyDependencies ? Context.getContext().createLibsFolder(this) : null;
 		Logger.infoUnindent("Dependencies copied to " + libsFolder + "!");		
 
 		// creates a runnable jar file
@@ -393,12 +392,12 @@ public abstract class Packager extends PackagerSettings {
 		
 		// invokes installer producers
 		
-		for (ArtifactGenerator generator : installerGenerators) {
+		for (ArtifactGenerator<?> generator : Context.getContext().getInstallerGenerators(platform)) {
 			try {
 				Logger.infoIndent("Generating " + generator.getArtifactName() + "...");
 				File artifact = generator.apply(this);
 				if (artifact != null) {
-					addIgnoreNull(installers, artifact);
+					installers.add(artifact);
 					Logger.infoUnindent(generator.getArtifactName() +  " generated in " + artifact + "!");
 				} else {
 					Logger.warnUnindent(generator.getArtifactName() +  " NOT generated!!!");					

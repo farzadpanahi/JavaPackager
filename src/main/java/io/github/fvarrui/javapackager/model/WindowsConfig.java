@@ -43,6 +43,7 @@ public class WindowsConfig implements Serializable {
 	private SetupMode setupMode = SetupMode.installForAllUsers;
 	private WindowsSigning signing;
 	private Registry registry = new Registry();
+	private WindowsExeCreationTool exeCreationTool = WindowsExeCreationTool.launch4j;
 
 	public File getIcoFile() {
 		return icoFile;
@@ -260,6 +261,14 @@ public class WindowsConfig implements Serializable {
 		this.registry = registry;
 	}
 
+	public WindowsExeCreationTool getExeCreationTool() {
+		return exeCreationTool;
+	}
+
+	public void setExeCreationTool(WindowsExeCreationTool exeCreationTool) {
+		this.exeCreationTool = exeCreationTool;
+	}
+
 	@Override
 	public String toString() {
 		return "WindowsConfig [icoFile=" + icoFile + ", headerType=" + headerType + ", companyName=" + companyName
@@ -271,7 +280,8 @@ public class WindowsConfig implements Serializable {
 				+ ", disableFinishedPage=" + disableFinishedPage + ", createDesktopIconTask=" + createDesktopIconTask
 				+ ", generateSetup=" + generateSetup + ", generateMsi=" + generateMsi + ", generateMsm=" + generateMsm
 				+ ", msiUpgradeCode=" + msiUpgradeCode + ", wrapJar=" + wrapJar + ", setupLanguages=" + setupLanguages
-				+ ", setupMode=" + setupMode + ", signing=" + signing + ", registry=" + registry + "]";
+				+ ", setupMode=" + setupMode + ", signing=" + signing + ", registry=" + registry + ", exeCreationTool="
+				+ exeCreationTool + "]";
 	}
 
 	/**

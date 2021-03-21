@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.packagers;
+package io.github.fvarrui.javapackager.common.generators;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import io.github.fvarrui.javapackager.model.Platform;
+import io.github.fvarrui.javapackager.packagers.Packager;
 import io.github.fvarrui.javapackager.utils.CommandUtils;
 import io.github.fvarrui.javapackager.utils.FileUtils;
 import io.github.fvarrui.javapackager.utils.JDKUtils;
@@ -19,7 +20,7 @@ import io.github.fvarrui.javapackager.utils.Logger;
 /**
  * Bundles a Java Runtime Enrironment (JRE) with the app
  */
-public class BundleJre extends ArtifactGenerator {
+public class BundleJre extends ArtifactGenerator<Packager> {
 	
 	public BundleJre() {
 		super("JRE");

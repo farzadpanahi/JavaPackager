@@ -1,16 +1,17 @@
-package io.github.fvarrui.javapackager.packagers;
+package io.github.fvarrui.javapackager.common.generators;
 
 import java.io.File;
 
+import io.github.fvarrui.javapackager.packagers.WindowsPackager;
 import io.github.fvarrui.javapackager.utils.Logger;
 import io.github.fvarrui.javapackager.utils.SignerException;
 import io.github.fvarrui.javapackager.utils.SignerHelper;
 
 /**
- * Artifact generation base class including Windows specific features (signing)  
+ * Artifact generation base class including Windows specific features (signing)
  */
-public abstract class WindowsArtifactGenerator extends ArtifactGenerator {
-	
+public abstract class WindowsArtifactGenerator extends ArtifactGenerator<WindowsPackager> {
+
 	private static final String TIMESTAMPING_AUTHORITY = "http://timestamp.comodoca.com/authenticode";
 
 	public WindowsArtifactGenerator(String artifactName) {
@@ -18,8 +19,10 @@ public abstract class WindowsArtifactGenerator extends ArtifactGenerator {
 	}
 
 	protected void sign(File file, WindowsPackager packager) {
-		if (packager.getWinConfig().getSigning() == null)
+		
+		if (packager.getWinConfig().getSigning() == null) {
 			return;
+		}
 
 		Logger.infoIndent("Signing " + file);
 

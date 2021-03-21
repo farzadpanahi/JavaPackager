@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.gradle;
+package io.github.fvarrui.javapackager.gradle.generators;
 
 import java.io.File;
 import java.util.UUID;
@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.gradle.api.tasks.bundling.Compression;
 import org.gradle.api.tasks.bundling.Tar;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.model.Platform;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.MacPackager;
 import io.github.fvarrui.javapackager.packagers.Packager;
@@ -15,7 +15,7 @@ import io.github.fvarrui.javapackager.packagers.Packager;
 /**
  * Creates tarball (tar.gz file) on Gradle context 
  */
-public class CreateTarball extends ArtifactGenerator {
+public class CreateTarball extends ArtifactGenerator<Packager> {
 	
 	public CreateTarball() {
 		super("Tarball");

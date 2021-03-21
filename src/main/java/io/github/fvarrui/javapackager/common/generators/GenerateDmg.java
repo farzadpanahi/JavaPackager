@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.packagers;
+package io.github.fvarrui.javapackager.common.generators;
 
 import static io.github.fvarrui.javapackager.utils.CommandUtils.execute;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -9,6 +9,8 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 import io.github.fvarrui.javapackager.model.MacConfig;
+import io.github.fvarrui.javapackager.model.Platform;
+import io.github.fvarrui.javapackager.packagers.MacPackager;
 import io.github.fvarrui.javapackager.utils.FileUtils;
 import io.github.fvarrui.javapackager.utils.Logger;
 import io.github.fvarrui.javapackager.utils.ThreadUtils;
@@ -18,28 +20,27 @@ import io.github.fvarrui.javapackager.utils.VelocityUtils;
  * Creates a DMG image file including all app folder's content only for MacOS so
  * app could be easily distributed
  */
-public class GenerateDmg extends ArtifactGenerator {
+public class GenerateDmg extends ArtifactGenerator<MacPackager> {
 
 	public GenerateDmg() {
 		super("DMG image");
 	}
 	
 	@Override
-	public boolean skip(Packager packager) {
-		return !packager.getMacConfig().isGenerateDmg();
+	public boolean skip(MacPackager packager) {
+		return !packager.getMacConfig().isGenerateDmg() || !Platform.mac.isCurrentPlatform();
 	}
 	
 	@Override
-	protected File doApply(Packager packager) throws Exception {
-		MacPackager macPackager = (MacPackager) packager;
+	protected File doApply(MacPackager packager) throws Exception {
 
-		File appFolder = macPackager.getAppFolder();
-		File assetsFolder = macPackager.getAssetsFolder();
-		String name = macPackager.getName();
-		File outputDirectory = macPackager.getOutputDirectory();
-		File iconFile = macPackager.getIconFile();
-		String version = macPackager.getVersion();
-		MacConfig macConfig = macPackager.getMacConfig();
+		File appFolder = packager.getAppFolder();
+		File assetsFolder = packager.getAssetsFolder();
+		String name = packager.getName();
+		File outputDirectory = packager.getOutputDirectory();
+		File iconFile = packager.getIconFile();
+		String version = packager.getVersion();
+		MacConfig macConfig = packager.getMacConfig();
 		
 		// sets volume name if blank
 		String volumeName = defaultIfBlank(macConfig.getVolumeName(), name);
@@ -106,7 +107,7 @@ public class GenerateDmg extends ArtifactGenerator {
 		// renders applescript 
 		Logger.info("Rendering DMG customization applescript ... ");
 		File applescriptFile = new File(assetsFolder, "customize-dmg.applescript");
-		VelocityUtils.render("/mac/customize-dmg.applescript.vtl", applescriptFile, macPackager);
+		VelocityUtils.render("/mac/customize-dmg.applescript.vtl", applescriptFile, packager);
 		Logger.info("Applescript rendered in " + applescriptFile.getAbsolutePath() + "!");
 		
 		// runs applescript 

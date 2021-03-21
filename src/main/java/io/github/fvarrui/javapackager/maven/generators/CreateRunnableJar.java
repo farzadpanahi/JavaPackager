@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.maven;
+package io.github.fvarrui.javapackager.maven.generators;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -18,8 +18,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.twdata.maven.mojoexecutor.MojoExecutor.Element;
 import org.twdata.maven.mojoexecutor.MojoExecutor.ExecutionEnvironment;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.model.Manifest;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
 import io.github.fvarrui.javapackager.utils.Logger;
@@ -28,7 +28,7 @@ import io.github.fvarrui.javapackager.utils.MojoExecutorUtils;
 /**
  * Creates a runnable jar file from sources on Maven context
  */
-public class CreateRunnableJar extends ArtifactGenerator {
+public class CreateRunnableJar extends ArtifactGenerator<Packager> {
 	
 	public CreateRunnableJar() {
 		super("Runnable JAR");

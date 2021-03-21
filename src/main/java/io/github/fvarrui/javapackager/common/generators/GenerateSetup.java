@@ -1,10 +1,12 @@
-package io.github.fvarrui.javapackager.packagers;
+package io.github.fvarrui.javapackager.common.generators;
 
 import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.model.Registry;
+import io.github.fvarrui.javapackager.packagers.WindowsPackager;
 import io.github.fvarrui.javapackager.utils.CommandUtils;
 import io.github.fvarrui.javapackager.utils.FileUtils;
 import io.github.fvarrui.javapackager.utils.VelocityUtils;
@@ -20,12 +22,12 @@ public class GenerateSetup extends WindowsArtifactGenerator {
 	}
 	
 	@Override
-	public boolean skip(Packager packager) {
-		return !packager.getWinConfig().isGenerateSetup();
+	public boolean skip(WindowsPackager packager) {
+		return !packager.getWinConfig().isGenerateSetup() || !Platform.windows.isCurrentPlatform();
 	}
 	
 	@Override
-	protected File doApply(Packager packager) throws Exception {
+	protected File doApply(WindowsPackager packager) throws Exception {
 		WindowsPackager windowsPackager = (WindowsPackager) packager;
 		
 		File iconFile = windowsPackager.getIconFile();

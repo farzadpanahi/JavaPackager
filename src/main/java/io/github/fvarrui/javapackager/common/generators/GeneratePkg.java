@@ -1,32 +1,33 @@
-package io.github.fvarrui.javapackager.packagers;
+package io.github.fvarrui.javapackager.common.generators;
 
 import java.io.File;
 
+import io.github.fvarrui.javapackager.model.Platform;
+import io.github.fvarrui.javapackager.packagers.MacPackager;
 import io.github.fvarrui.javapackager.utils.CommandUtils;
 
 /**
  * Creates a PKG installer file including all app folder's content only for MacOS so
  * app could be easily distributed
  */
-public class GeneratePkg extends ArtifactGenerator {
+public class GeneratePkg extends ArtifactGenerator<MacPackager> {
 
 	public GeneratePkg() {
 		super("PKG installer");
 	}
 	
 	@Override
-	public boolean skip(Packager packager) {
-		return !packager.getMacConfig().isGeneratePkg();
+	public boolean skip(MacPackager packager) {
+		return !packager.getMacConfig().isGeneratePkg() || !Platform.mac.isCurrentPlatform();
 	}
 	
 	@Override
-	protected File doApply(Packager packager) throws Exception {
-		MacPackager macPackager = (MacPackager) packager;
+	protected File doApply(MacPackager packager) throws Exception {
 
-		File appFile = macPackager.getAppFile();
-		String name = macPackager.getName();
-		File outputDirectory = macPackager.getOutputDirectory();
-		String version = macPackager.getVersion();
+		File appFile = packager.getAppFile();
+		String name = packager.getName();
+		File outputDirectory = packager.getOutputDirectory();
+		String version = packager.getVersion();
 		
 		File pkgFile = new File(outputDirectory, name + "_" + version + ".pkg");
 		

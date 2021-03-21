@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.maven;
+package io.github.fvarrui.javapackager.maven.generators;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -11,16 +11,16 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 import java.io.File;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 import io.github.fvarrui.javapackager.utils.VelocityUtils;
 
 /**
  * Creates zipball (zip file) on Maven context 
  */
-public class CreateZipball extends ArtifactGenerator {
+public class CreateZipball extends ArtifactGenerator<Packager> {
 	
 	public CreateZipball() {
 		super("Zipball");

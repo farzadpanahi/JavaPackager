@@ -15,11 +15,6 @@ import io.github.fvarrui.javapackager.utils.VelocityUtils;
  */
 public class LinuxPackager extends Packager {
 	
-	public LinuxPackager() {
-		super();
-		installerGenerators.addAll(Context.getContext().getLinuxInstallerGenerators());
-	}
-
 	@Override
 	public void doInit() throws Exception {
 

@@ -1,20 +1,20 @@
-package io.github.fvarrui.javapackager.gradle;
+package io.github.fvarrui.javapackager.gradle.generators;
 
 import java.io.File;
 import java.util.UUID;
 
 import org.gradle.api.tasks.bundling.Zip;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.MacPackager;
 import io.github.fvarrui.javapackager.packagers.Packager;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 
 /**
  * Creates zipball (zip file)  on Gradle context
  */
-public class CreateZipball extends ArtifactGenerator {
+public class CreateZipball extends ArtifactGenerator<Packager> {
 	
 	public CreateZipball() {
 		super("Zipball");

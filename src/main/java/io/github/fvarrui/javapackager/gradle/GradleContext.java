@@ -5,8 +5,17 @@ import java.io.File;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 
+import io.github.fvarrui.javapackager.gradle.generators.CreateLibsFolder;
+import io.github.fvarrui.javapackager.gradle.generators.CreateRunnableJar;
+import io.github.fvarrui.javapackager.gradle.generators.CreateTarball;
+import io.github.fvarrui.javapackager.gradle.generators.CreateWindowsExeLaunch4j;
+import io.github.fvarrui.javapackager.gradle.generators.CreateZipball;
+import io.github.fvarrui.javapackager.gradle.generators.GenerateDeb;
+import io.github.fvarrui.javapackager.gradle.generators.GenerateRpm;
+import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
+import io.github.fvarrui.javapackager.packagers.WindowsPackager;
 
 /**
  * Gradle context 
@@ -20,8 +29,8 @@ public class GradleContext extends Context<Logger> {
 		this.project = project;
 		
 		// gradle dependant generators 
-		this.getLinuxInstallerGenerators().add(new GenerateDeb());
-		this.getLinuxInstallerGenerators().add(new GenerateRpm());
+		getInstallerGenerators(Platform.linux).add(new GenerateDeb());
+		getInstallerGenerators(Platform.linux).add(new GenerateRpm());
 		
 	}
 
@@ -44,8 +53,8 @@ public class GradleContext extends Context<Logger> {
 	}
 
 	@Override
-	public File copyDependencies(Packager packager) throws Exception {
-		return new CopyDependencies().apply(packager);
+	public File createLibsFolder(Packager packager) throws Exception {
+		return new CreateLibsFolder().apply(packager);
 	}
 
 	@Override
@@ -65,8 +74,8 @@ public class GradleContext extends Context<Logger> {
 	}
 	
 	@Override
-	public File createWindowsExe(Packager packager) throws Exception {
-		return new CreateWindowsExe().apply(packager);	
+	public File createWindowsExe(WindowsPackager packager) throws Exception {
+		return new CreateWindowsExeLaunch4j().apply(packager);	
 	}
 
 }

@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.maven;
+package io.github.fvarrui.javapackager.maven.generators;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -13,17 +13,22 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 
 /**
  * Copies all dependencies to app folder on Maven context
  */
-public class CopyDependencies extends ArtifactGenerator {
+public class CreateLibsFolder extends ArtifactGenerator<Packager> {
 
-	public CopyDependencies() {
+	public CreateLibsFolder() {
 		super("Dependencies");
+	}
+	
+	@Override
+	public boolean skip(Packager packager) {
+		return !packager.getCopyDependencies();
 	}
 	
 	@Override

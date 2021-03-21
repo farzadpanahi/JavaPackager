@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.gradle;
+package io.github.fvarrui.javapackager.gradle.generators;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,15 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.bundling.Jar;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.model.Manifest;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
 
 /**
  * Creates a runnable jar file from sources on Maven context
  */
-public class CreateRunnableJar extends ArtifactGenerator {
+public class CreateRunnableJar extends ArtifactGenerator<Packager> {
 	
 	public CreateRunnableJar() {
 		super("Runnable JAR");

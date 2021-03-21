@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.maven;
+package io.github.fvarrui.javapackager.maven.generators;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,16 +8,16 @@ import java.util.List;
 
 import org.apache.maven.model.License;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 import io.github.fvarrui.javapackager.utils.FileUtils;
 import io.github.fvarrui.javapackager.utils.Logger;
 
 /**
  * Creates a runnable jar file from sources on Maven context
  */
-public class ResolveLicenseFromPOM extends ArtifactGenerator {
+public class ResolveLicenseFromPOM extends ArtifactGenerator<Packager> {
 	
 	public ResolveLicenseFromPOM() {
 		super("LICENSE");

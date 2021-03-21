@@ -1,34 +1,29 @@
-package io.github.fvarrui.javapackager.gradle;
+package io.github.fvarrui.javapackager.gradle.generators;
 
 import java.io.File;
-import java.util.UUID;
 
-import com.netflix.gradle.plugins.deb.Deb;
-
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
-import io.github.fvarrui.javapackager.packagers.Context;
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
+import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.packagers.LinuxPackager;
-import io.github.fvarrui.javapackager.packagers.Packager;
 import io.github.fvarrui.javapackager.utils.Logger;
-import io.github.fvarrui.javapackager.utils.VelocityUtils;
 
 /**
  * Creates a DEB package file including all app folder's content only for 
  * GNU/Linux so app could be easily distributed on Gradle context
  */
-public class GenerateDeb extends ArtifactGenerator {
+public class GenerateDeb extends ArtifactGenerator<LinuxPackager> {
 
 	public GenerateDeb() {
 		super("DEB package");
 	}
 	
 	@Override
-	public boolean skip(Packager packager) {
-		return !packager.getLinuxConfig().isGenerateDeb();
+	public boolean skip(LinuxPackager packager) {
+		return !packager.getLinuxConfig().isGenerateDeb() || !Platform.linux.isCurrentPlatform();
 	}
 	
 	@Override
-	protected File doApply(Packager packager) throws Exception {
+	protected File doApply(LinuxPackager packager) throws Exception {
 		
 		Logger.warn("Sorry! " + getArtifactName() + " generation is not yet available");
 		return null;
@@ -103,8 +98,8 @@ public class GenerateDeb extends ArtifactGenerator {
 
 	}
 	
-	private Deb createDebTask() {
-		return Context.getGradleContext().getProject().getTasks().create("createDeb_" + UUID.randomUUID(), Deb.class);
-	}
+//	private Deb createDebTask() {
+//		return Context.getGradleContext().getProject().getTasks().create("createDeb_" + UUID.randomUUID(), Deb.class);
+//	}
 	
 }

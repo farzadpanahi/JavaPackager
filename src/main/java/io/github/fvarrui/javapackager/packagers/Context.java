@@ -3,9 +3,19 @@ package io.github.fvarrui.javapackager.packagers;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
+
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
+import io.github.fvarrui.javapackager.common.generators.GenerateDmg;
+import io.github.fvarrui.javapackager.common.generators.GenerateMsi;
+import io.github.fvarrui.javapackager.common.generators.GenerateMsm;
+import io.github.fvarrui.javapackager.common.generators.GeneratePkg;
+import io.github.fvarrui.javapackager.common.generators.GenerateSetup;
 import io.github.fvarrui.javapackager.gradle.GradleContext;
 import io.github.fvarrui.javapackager.maven.MavenContext;
+import io.github.fvarrui.javapackager.model.Platform;
 
 /**
  * Building-tool context 
@@ -16,11 +26,11 @@ public abstract class Context<T> {
 		super();
 		
 		// building tool independent generators
-		macInstallerGenerators.add(new GenerateDmg());
-		macInstallerGenerators.add(new GeneratePkg());
-		windowsInstallerGenerators.add(new GenerateSetup());
-		windowsInstallerGenerators.add(new GenerateMsm());
-		windowsInstallerGenerators.add(new GenerateMsi());
+		getInstallerGenerators(Platform.mac).add(new GenerateDmg());
+		getInstallerGenerators(Platform.mac).add(new GeneratePkg());
+		getInstallerGenerators(Platform.windows).add(new GenerateSetup());
+		getInstallerGenerators(Platform.windows).add(new GenerateMsm());
+		getInstallerGenerators(Platform.windows).add(new GenerateMsi());
 		
 	}
 	
@@ -32,28 +42,23 @@ public abstract class Context<T> {
 	// platform independent functions
 	
 	public abstract File createRunnableJar(Packager packager) throws Exception;
-	public abstract File copyDependencies(Packager packager) throws Exception;
+	public abstract File createLibsFolder(Packager packager) throws Exception;
 	public abstract File createTarball(Packager packager) throws Exception;
 	public abstract File createZipball(Packager packager) throws Exception;
 	public abstract File resolveLicense(Packager packager) throws Exception;
-	public abstract File createWindowsExe(Packager packager) throws Exception;
+	public abstract File createWindowsExe(WindowsPackager packager) throws Exception;
 	
 	// installer producers
 	
-	private List<ArtifactGenerator> linuxInstallerGenerators = new ArrayList<>();
-	private List<ArtifactGenerator> macInstallerGenerators = new ArrayList<>();
-	private List<ArtifactGenerator> windowsInstallerGenerators = new ArrayList<>();
-
-	public List<ArtifactGenerator> getLinuxInstallerGenerators() {
-		return linuxInstallerGenerators;
-	}
+	private Map<Platform, List<ArtifactGenerator<? extends Packager>>> installerGeneratorsMap = new HashedMap<>();
 	
-	public List<ArtifactGenerator> getMacInstallerGenerators() {
-		return macInstallerGenerators;
-	}
-	
-	public List<ArtifactGenerator> getWindowsInstallerGenerators() {
-		return windowsInstallerGenerators;
+	public List<ArtifactGenerator<? extends Packager>> getInstallerGenerators(Platform platform) {
+		List<ArtifactGenerator<? extends Packager>> platformInstallers = installerGeneratorsMap.get(platform);
+		if (platformInstallers == null) {
+			platformInstallers = new ArrayList<>();
+			installerGeneratorsMap.put(platform, platformInstallers);
+		}
+		return platformInstallers;
 	}
 	
 	// static context

@@ -5,8 +5,18 @@ import java.io.File;
 import org.apache.maven.plugin.logging.Log;
 import org.twdata.maven.mojoexecutor.MojoExecutor.ExecutionEnvironment;
 
+import io.github.fvarrui.javapackager.maven.generators.CreateLibsFolder;
+import io.github.fvarrui.javapackager.maven.generators.CreateRunnableJar;
+import io.github.fvarrui.javapackager.maven.generators.CreateTarball;
+import io.github.fvarrui.javapackager.maven.generators.CreateWindowsExe;
+import io.github.fvarrui.javapackager.maven.generators.CreateZipball;
+import io.github.fvarrui.javapackager.maven.generators.GenerateDeb;
+import io.github.fvarrui.javapackager.maven.generators.GenerateRpm;
+import io.github.fvarrui.javapackager.maven.generators.ResolveLicenseFromPOM;
+import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
+import io.github.fvarrui.javapackager.packagers.WindowsPackager;
 
 /**
  * Maven context 
@@ -23,8 +33,8 @@ public class MavenContext extends Context<Log> {
 		this.logger = logger;
 		
 		// maven dependant generators 		
-		this.getLinuxInstallerGenerators().add(new GenerateDeb());
-		this.getLinuxInstallerGenerators().add(new GenerateRpm());
+		getInstallerGenerators(Platform.linux).add(new GenerateDeb());
+		getInstallerGenerators(Platform.linux).add(new GenerateRpm());
 		
 	}
 
@@ -47,8 +57,8 @@ public class MavenContext extends Context<Log> {
 	}
 
 	@Override
-	public File copyDependencies(Packager packager) throws Exception {
-		return new CopyDependencies().apply(packager);
+	public File createLibsFolder(Packager packager) throws Exception {
+		return new CreateLibsFolder().apply(packager);
 	}
 
 	@Override
@@ -67,7 +77,7 @@ public class MavenContext extends Context<Log> {
 	}
 	
 	@Override
-	public File createWindowsExe(Packager packager) throws Exception {
+	public File createWindowsExe(WindowsPackager packager) throws Exception {
 		return new CreateWindowsExe().apply(packager);
 	}
 

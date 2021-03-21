@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.maven;
+package io.github.fvarrui.javapackager.maven.generators;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -16,10 +16,10 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.twdata.maven.mojoexecutor.MojoExecutor.Element;
 
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
+import io.github.fvarrui.javapackager.model.Platform;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.LinuxPackager;
-import io.github.fvarrui.javapackager.packagers.Packager;
 import io.github.fvarrui.javapackager.utils.FileUtils;
 import io.github.fvarrui.javapackager.utils.Logger;
 import io.github.fvarrui.javapackager.utils.VelocityUtils;
@@ -28,34 +28,33 @@ import io.github.fvarrui.javapackager.utils.VelocityUtils;
  * Creates a RPM package file including all app folder's content only for 
  * GNU/Linux so app could be easily distributed on Maven context
  */
-public class GenerateRpm extends ArtifactGenerator {
+public class GenerateRpm extends ArtifactGenerator<LinuxPackager> {
 
 	public GenerateRpm() {
 		super("RPM package");
 	}
 	
 	@Override
-	public boolean skip(Packager packager) {
-		return !packager.getLinuxConfig().isGenerateRpm();
+	public boolean skip(LinuxPackager packager) {
+		return !packager.getLinuxConfig().isGenerateRpm() || !Platform.linux.isCurrentPlatform();
 	}
 	
 	@Override
-	protected File doApply(Packager packager) throws Exception {
-		LinuxPackager linuxPackager = (LinuxPackager) packager; 
+	protected File doApply(LinuxPackager packager) throws Exception {
 
-		File assetsFolder = linuxPackager.getAssetsFolder();
-		String name = linuxPackager.getName();
-		File appFolder = linuxPackager.getAppFolder();
-		File iconFile = linuxPackager.getIconFile();
-		File outputDirectory = linuxPackager.getOutputDirectory();
-		String version = linuxPackager.getVersion();
-		boolean bundleJre = linuxPackager.getBundleJre();
-		String jreDirectoryName = linuxPackager.getJreDirectoryName();
-		String organizationName = linuxPackager.getOrganizationName();
+		File assetsFolder = packager.getAssetsFolder();
+		String name = packager.getName();
+		File appFolder = packager.getAppFolder();
+		File iconFile = packager.getIconFile();
+		File outputDirectory = packager.getOutputDirectory();
+		String version = packager.getVersion();
+		boolean bundleJre = packager.getBundleJre();
+		String jreDirectoryName = packager.getJreDirectoryName();
+		String organizationName = packager.getOrganizationName();
 		
 		// generates desktop file from velocity template
 		File desktopFile = new File(assetsFolder, name + ".desktop");
-		VelocityUtils.render("linux/desktop.vtl", desktopFile, linuxPackager);
+		VelocityUtils.render("linux/desktop.vtl", desktopFile, packager);
 		Logger.info("Rendering desktop file to " + desktopFile.getAbsolutePath());
 		
 		// copies desktop file to app

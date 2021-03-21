@@ -1,4 +1,4 @@
-package io.github.fvarrui.javapackager.maven;
+package io.github.fvarrui.javapackager.maven.generators;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -17,50 +17,47 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.twdata.maven.mojoexecutor.MojoExecutor.Element;
 
+import io.github.fvarrui.javapackager.common.generators.WindowsArtifactGenerator;
 import io.github.fvarrui.javapackager.model.WindowsConfig;
 import io.github.fvarrui.javapackager.packagers.Context;
-import io.github.fvarrui.javapackager.packagers.Packager;
-import io.github.fvarrui.javapackager.packagers.WindowsArtifactGenerator;
 import io.github.fvarrui.javapackager.packagers.WindowsPackager;
 import io.github.fvarrui.javapackager.utils.FileUtils;
 
 /**
  * Copies all dependencies to app folder on Maven context
  */
-public class CreateWindowsExe extends WindowsArtifactGenerator {
+public class CreateWindowsExeLaunch4j extends WindowsArtifactGenerator {
 	
-	private File launch4jFolder;
-	private File genericManifest;
-	private File genericIcon;
-	private File genericJar;
-	private File genericExe;
-	
-	public CreateWindowsExe() {
-		super("Windows EXE");
+	public CreateWindowsExeLaunch4j() {
+		super("Windows Launch4j EXE");
 	}
 
 	@Override
-	protected File doApply(Packager packager) {
+	protected File doApply(WindowsPackager packager) throws Exception {
 		
-		WindowsPackager windowsPackager = (WindowsPackager) packager;
+		List<String> vmArgs = packager.getVmArgs();
+		WindowsConfig winConfig = packager.getWinConfig();
+		File executable = packager.getExecutable();
+		String mainClass = packager.getMainClass();
+		boolean useResourcesAsWorkingDir = packager.isUseResourcesAsWorkingDir();
+		boolean bundleJre = packager.getBundleJre();
+		String jreDirectoryName = packager.getJreDirectoryName(); 
+		String classpath = packager.getClasspath();
+		String jreMinVersion = packager.getJreMinVersion();
+		File jarFile = packager.getJarFile();
+		File assetsFolder = packager.getAssetsFolder();
+		File manifestFile = packager.getManifestFile();
+		File iconFile = packager.getIconFile();
+
+		File launch4jFolder = FileUtils.mkdir(assetsFolder, "launch4j");		
+		File genericManifest = new File(launch4jFolder, "app.exe.manifest");
+		File genericIcon = new File(launch4jFolder, "app.ico");
+		File genericJar = new File(launch4jFolder, "app.jar");
+		File genericExe = new File(launch4jFolder, "app.exe");
 		
-		List<String> vmArgs = windowsPackager.getVmArgs();
-		WindowsConfig winConfig = windowsPackager.getWinConfig();
-		File executable = windowsPackager.getExecutable();
-		String mainClass = windowsPackager.getMainClass();
-		boolean useResourcesAsWorkingDir = windowsPackager.isUseResourcesAsWorkingDir();
-		boolean bundleJre = windowsPackager.getBundleJre();
-		String jreDirectoryName = windowsPackager.getJreDirectoryName(); 
-		String classpath = windowsPackager.getClasspath();
-		String jreMinVersion = windowsPackager.getJreMinVersion();
-		File jarFile = windowsPackager.getJarFile();
-		
-		try {
-			// creates a folder only for launch4j assets
-			createAssets(windowsPackager);
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		} 
+		FileUtils.copyFileToFile(manifestFile, genericManifest);
+		FileUtils.copyFileToFile(iconFile, genericIcon);
+		FileUtils.copyFileToFile(jarFile, genericJar);
 		
 		String jarPath = winConfig.isWrapJar() ? genericJar.getAbsolutePath() : jarFile.getName();
 	
@@ -107,49 +104,22 @@ public class CreateWindowsExe extends WindowsArtifactGenerator {
 				);
 
 		// invokes launch4j plugin to generate windows executable
-		try {
-			
-			executeMojo(
-					plugin(
-							groupId("com.akathist.maven.plugins.launch4j"), 
-							artifactId("launch4j-maven-plugin"),
-							version("1.7.25")
-					),
-					goal("launch4j"),
-					configuration(pluginConfig.toArray(new Element[pluginConfig.size()])),
-					Context.getMavenContext().getEnv()
-				);
-			
-			sign(genericExe, windowsPackager);
-			
-			FileUtils.copyFileToFile(genericExe, executable);
-			
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}	
+		executeMojo(
+				plugin(
+						groupId("com.akathist.maven.plugins.launch4j"), 
+						artifactId("launch4j-maven-plugin"),
+						version("1.7.25")
+				),
+				goal("launch4j"),
+				configuration(pluginConfig.toArray(new Element[pluginConfig.size()])),
+				Context.getMavenContext().getEnv()
+			);
+		
+		sign(genericExe, packager);
+		
+		FileUtils.copyFileToFile(genericExe, executable);
 
 		return executable;
-	}
-
-	private void createAssets(WindowsPackager packager) throws Exception {
-		
-		File assetsFolder = packager.getAssetsFolder();
-		File manifestFile = packager.getManifestFile();
-		File iconFile = packager.getIconFile();
-		File jarFile = packager.getJarFile();
-
-		launch4jFolder = new File(assetsFolder, "launch4j");
-		if (!launch4jFolder.exists()) launch4jFolder.mkdirs();
-		
-		genericManifest = new File(launch4jFolder, "app.exe.manifest");
-		genericIcon = new File(launch4jFolder, "app.ico");
-		genericJar = new File(launch4jFolder, "app.jar");
-		genericExe = new File(launch4jFolder, "app.exe");
-		
-		FileUtils.copyFileToFile(manifestFile, genericManifest);
-		FileUtils.copyFileToFile(iconFile, genericIcon);
-		FileUtils.copyFileToFile(jarFile, genericJar);
-		
 	}
 
 }

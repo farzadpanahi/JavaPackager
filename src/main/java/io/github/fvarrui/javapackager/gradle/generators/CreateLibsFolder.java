@@ -1,23 +1,28 @@
-package io.github.fvarrui.javapackager.gradle;
+package io.github.fvarrui.javapackager.gradle.generators;
 
 import java.io.File;
 
 import org.gradle.api.Project;
 import org.gradle.api.tasks.Copy;
 
+import io.github.fvarrui.javapackager.common.generators.ArtifactGenerator;
 import io.github.fvarrui.javapackager.packagers.Context;
 import io.github.fvarrui.javapackager.packagers.Packager;
-import io.github.fvarrui.javapackager.packagers.ArtifactGenerator;
 
 /**
  * Copies all dependencies to app folder on Maven context
  */
-public class CopyDependencies extends ArtifactGenerator {
+public class CreateLibsFolder extends ArtifactGenerator<Packager> {
 	
 	public Copy copyLibsTask;
 	
-	public CopyDependencies() {
-		super("Dependencies");
+	public CreateLibsFolder() {
+		super("Libs folder");
+	}
+	
+	@Override
+	public boolean skip(Packager packager) {
+		return !packager.getCopyDependencies();
 	}
 	
 	@Override
