@@ -110,7 +110,7 @@ public class BundleJre extends ArtifactGenerator<Packager> {
 			if (destinationFolder.exists()) FileUtils.removeFolder(destinationFolder);
 			
 			// generates customized jre using modules
-			CommandUtils.execute(jlink.getAbsolutePath(), "--module-path", modulesDir, "--add-modules", modules, "--output", destinationFolder, "--no-header-files", "--no-man-pages", "--strip-debug", "--compress=2");
+			CommandUtils.execute(jlink.getAbsolutePath(), "--vm=client", "--module-path", modulesDir, "--add-modules", modules, "--output", destinationFolder, "--no-header-files", "--no-man-pages", "--strip-debug", "--compress=2");
 	
 			// sets execution permissions on executables in jre
 			File binFolder = new File(destinationFolder, "bin");
